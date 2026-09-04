@@ -1,0 +1,19 @@
+# Dependencies and build output
+node_modules/
+dist/
+*.tsbuildinfo
+
+# The client's site clone. A separate project with its own workspace,
+# lockfile and history — referenced as the design source, not part of Recall.
+tokensand-clone/
+
+# Local env and editor noise
+.env
+.env.*
+.DS_Store
+.vscode/
+.idea/
+
+# Vite / vitest caches
+.vite/
+coverage/

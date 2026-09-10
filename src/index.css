@@ -1,0 +1,562 @@
+@import './styles/fonts.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Palette and type lifted from the tokens& site:
+ *   --bg    rgb(208, 220, 230)  pale blue
+ *   --text  rgb(30, 30, 30)     near-black
+ *   --cream rgb(239, 236, 212)
+ *   Lora (serif) - IBM Plex Mono (chrome) - Inter (fallback sans)
+ * Expressed as HSL triples so every shadcn primitive inherits it.
+ */
+
+@layer base {
+  :root {
+    --background: 207 31% 86%;
+    --foreground: 0 0% 12%;
+
+    --card: 53 46% 88%;
+    --card-foreground: 0 0% 12%;
+
+    --popover: 207 31% 90%;
+    --popover-foreground: 0 0% 12%;
+
+    /* .btn--primary: solid near-black, cream label */
+    --primary: 0 0% 12%;
+    --primary-foreground: 53 46% 88%;
+
+    --secondary: 53 46% 88%;
+    --secondary-foreground: 0 0% 12%;
+
+    --muted: 207 26% 81%;
+    --muted-foreground: 0 0% 34%;
+
+    --accent: 53 46% 88%;
+    --accent-foreground: 0 0% 12%;
+
+    /* their .form__error / .form__status--error */
+    --destructive: 0 69% 36%;
+    --destructive-foreground: 53 46% 88%;
+
+    /* rgba(30,30,30,0.2) resolved over the blue */
+    --border: 207 15% 70%;
+    --input: 0 0% 12%;
+    --ring: 0 0% 12%;
+
+    --radius: 10px;
+
+    /* Section 11's two accents, retuned to sit on the pale blue. */
+    --unverified: 30 84% 32%;
+    --unverified-soft: 38 62% 84%;
+    --edited: 155 48% 26%;
+    --edited-soft: 155 30% 82%;
+  }
+
+  /* tokens& ships light only; this keeps its character after dark. */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background: 207 24% 11%;
+      --foreground: 53 24% 90%;
+
+      --card: 207 20% 15%;
+      --card-foreground: 53 24% 90%;
+
+      --popover: 207 20% 16%;
+      --popover-foreground: 53 24% 90%;
+
+      --primary: 53 30% 88%;
+      --primary-foreground: 207 24% 11%;
+
+      --secondary: 207 18% 20%;
+      --secondary-foreground: 53 24% 90%;
+
+      --muted: 207 18% 19%;
+      --muted-foreground: 207 12% 65%;
+
+      --accent: 207 18% 20%;
+      --accent-foreground: 53 24% 90%;
+
+      --destructive: 0 55% 48%;
+      --destructive-foreground: 53 24% 90%;
+
+      --border: 207 14% 28%;
+      --input: 207 14% 40%;
+      --ring: 53 24% 80%;
+
+      --unverified: 36 76% 62%;
+      --unverified-soft: 36 24% 20%;
+      --edited: 152 40% 56%;
+      --edited-soft: 152 22% 18%;
+    }
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: theme('fontFamily.mono');
+    font-size: 14px;
+    line-height: 22.4px;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Their headings are Lora, regular weight, italics for emphasis. */
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: theme('fontFamily.serif');
+    font-weight: 400;
+  }
+}
+
+@layer components {
+  /* --------------------------------------------------------- Type ------ */
+
+  /* Answer text. Section 11: serif, 18-19px, line-height 1.65. */
+  .answer-prose {
+    font-family: theme('fontFamily.serif');
+    font-size: 18.5px;
+    line-height: 1.65;
+  }
+
+  /* Their .eyebrow - the workhorse label of the whole site. */
+  .eyebrow {
+    font-family: theme('fontFamily.mono');
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .page-title {
+    font-family: theme('fontFamily.serif');
+    font-size: 50px;
+    line-height: 57.5px;
+  }
+
+  .page-subtitle {
+    font-family: theme('fontFamily.mono');
+    font-size: 15px;
+    line-height: 1.6;
+    max-width: 60ch;
+    color: hsl(var(--foreground) / 0.9);
+  }
+
+  @media (max-width: 768px) {
+    .page-title {
+      font-size: 36px;
+      line-height: 42px;
+    }
+  }
+
+  /* --------------------------------------------------------- Surfaces -- */
+
+  /* Their .modal: panel, hard 1px rule, generous radius. */
+  .panel {
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--foreground));
+    border-radius: 18px;
+  }
+
+  .hairline {
+    border-color: hsl(var(--foreground) / 0.2);
+  }
+
+  /* --------------------------------------------------------- Bridge ---- */
+
+  /*
+   * Their fixed pixel-art scene with the gradient scrim over it. Two scrim
+   * strengths: the hero uses theirs verbatim; working screens use a heavier
+   * one so 18px serif stays readable on top of the sky.
+   */
+  .bridge {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background-color: rgb(135, 175, 215);
+    background-image: url('/images/hero-bridge.png');
+    background-position: center bottom;
+    background-size: 100% auto;
+    background-repeat: no-repeat;
+    pointer-events: none;
+  }
+
+  /* Taller than 1.6:1 and the fitted image would leave a band of flat sky at
+     the top; cover it back over so the scene still reaches the fold. */
+  @media (max-aspect-ratio: 8 / 5) {
+    .bridge {
+      background-size: auto 100%;
+    }
+  }
+
+  .bridge::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: none;
+  }
+
+  .bridge--page::after {
+    background: linear-gradient(
+      180deg,
+      rgba(240, 238, 226, 0) 0%,
+      rgba(240, 238, 226, 0) 26%,
+      rgba(240, 238, 226, 0.5) 55%,
+      rgba(240, 238, 226, 0.78) 100%
+    );
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .bridge {
+      filter: saturate(0.75) brightness(0.55);
+    }
+
+    .bridge::after {
+      background: rgba(18, 26, 33, 0.25);
+    }
+
+    .bridge--page::after {
+      background: linear-gradient(
+        180deg,
+        rgba(16, 24, 31, 0.15) 0%,
+        rgba(16, 24, 31, 0.3) 26%,
+        rgba(16, 24, 31, 0.62) 55%,
+        rgba(16, 24, 31, 0.82) 100%
+      );
+    }
+  }
+
+  /* Everything that sits over the scene. */
+  .above {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Their header floats over the scene rather than sitting on a bar. */
+  .header-float {
+    background: transparent;
+    backdrop-filter: blur(2px);
+  }
+
+  /*
+   * Panning variant for the deck. The scene is laid out wider than the
+   * viewport so sliding a panel travels along the span, easing on the same
+   * curve as the track so image and content move as one.
+   */
+  .bridge--pan {
+    background-size: 132% auto;
+    background-position: var(--pan, 0%) bottom;
+    transition: background-position 0.8s cubic-bezier(0.7, 0, 0.2, 1);
+  }
+
+  @media (max-aspect-ratio: 8 / 5) {
+    .bridge--pan {
+      background-size: auto 132%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bridge--pan {
+      transition: none;
+    }
+  }
+
+  /*
+   * One scene per section. The second url is the fallback: until the real
+   * plate is dropped into public/images, the bridge shows instead of a hole.
+   */
+  .bridge--skyline {
+    background-image: url('/images/scene-skyline.png'), url('/images/hero-bridge.png');
+  }
+
+  .bridge--houses {
+    background-image: url('/images/scene-houses.png'), url('/images/hero-bridge.png');
+  }
+
+  .bridge--hills {
+    background-image: url('/images/scene-hills.png'), url('/images/hero-bridge.png');
+  }
+
+  /* --------------------------------------------------------- Hero ------ */
+
+  .hero-title {
+    font-family: theme('fontFamily.serif');
+    font-size: clamp(40px, 6vw, 76px);
+    line-height: 1.1;
+  }
+
+  .hero-sub {
+    font-family: theme('fontFamily.mono');
+    font-size: 16px;
+    line-height: 1.6;
+    max-width: 52ch;
+    color: rgba(30, 30, 30, 0.7);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .hero-sub {
+      color: hsl(var(--foreground) / 0.75);
+    }
+  }
+
+  /* Their .home__stat pair. */
+  .stat-value {
+    font-family: theme('fontFamily.serif');
+    font-size: 56px;
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-family: theme('fontFamily.mono');
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    margin-top: 10px;
+  }
+
+  /* Their .t-card: translucent white over the scene. */
+  .glass-card {
+    border: 1px solid hsl(var(--foreground) / 0.35);
+    border-radius: 14px;
+    padding: 22px;
+    background: rgba(255, 255, 255, 0.25);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .glass-card {
+      background: rgba(255, 255, 255, 0.06);
+    }
+  }
+
+  /* --------------------------------------------------------- Deck ------ */
+
+  /* Their horizontally sliding home: four panels over the fixed scene. */
+  .deck {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  .deck__track {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    width: 400vw;
+    height: 100%;
+    z-index: 1;
+    transition: transform 0.8s cubic-bezier(0.7, 0, 0.2, 1);
+    will-change: transform;
+  }
+
+  .deck__panel {
+    width: 100vw;
+    height: 100%;
+    flex: 0 0 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0 8vw;
+    overflow-y: auto;
+  }
+
+  .deck__inner {
+    max-width: 880px;
+    width: 100%;
+    padding: 96px 0 72px;
+    text-align: center;
+  }
+
+  .deck__inner .hero-sub {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .deck__panel-title {
+    font-family: theme('fontFamily.serif');
+    font-size: clamp(32px, 4vw, 50px);
+    line-height: 1.15;
+  }
+
+  .deck__progress {
+    position: absolute;
+    bottom: 36px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    display: flex;
+    gap: 12px;
+  }
+
+  .deck__dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1px solid hsl(var(--foreground));
+    background: transparent;
+    padding: 0;
+  }
+
+  .deck__dot--active {
+    background: hsl(var(--foreground));
+  }
+
+  .deck__hint {
+    position: absolute;
+    bottom: 34px;
+    right: 36px;
+    z-index: 2;
+    font-family: theme('fontFamily.mono');
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    opacity: 0.7;
+  }
+
+  /* Their mobile fallback: stop sliding, stack vertically. */
+  @media (max-width: 768px) {
+    .deck {
+      position: static;
+      overflow: visible;
+    }
+
+    .deck__track {
+      position: relative;
+      width: 100%;
+      height: auto;
+      flex-direction: column;
+      transform: none !important;
+      transition: none;
+    }
+
+    .deck__panel {
+      width: 100%;
+      flex: none;
+      min-height: 100vh;
+      height: auto;
+      padding: 120px 24px 80px;
+    }
+
+    .deck__progress,
+    .deck__hint {
+      display: none;
+    }
+  }
+
+  /*
+   * Reading surface. The verification pass is 18px serif you edit for an
+   * hour, so it gets its own ground rather than sitting on the sky.
+   */
+  .reading-panel {
+    background: rgba(255, 255, 255, 0.45);
+    border: 1px solid hsl(var(--foreground) / 0.15);
+    border-radius: 14px;
+    padding: 28px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .reading-panel {
+      background: rgba(18, 26, 33, 0.62);
+    }
+  }
+
+  @media print {
+    .reading-panel {
+      background: #fff !important;
+      border: 0 !important;
+      padding: 0 !important;
+      backdrop-filter: none !important;
+    }
+  }
+
+  /* --------------------------------------------------------- Marks ----- */
+
+  /* Never colour-only: the dot and the border carry the state. */
+  .token-unverified {
+    text-decoration: underline dotted hsl(var(--unverified));
+    text-underline-offset: 4px;
+    text-decoration-thickness: 1.5px;
+  }
+
+  .token-unverified::before {
+    content: '';
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    margin-right: 3px;
+    vertical-align: 0.35em;
+    border-radius: 9999px;
+    background: hsl(var(--unverified));
+  }
+
+  .token-edited {
+    border-left: 2px solid hsl(var(--edited));
+    padding-left: 4px;
+    margin-left: 1px;
+  }
+}
+
+@media print {
+  @page {
+    margin: 18mm 16mm;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  main {
+    max-width: none !important;
+    padding: 0 !important;
+  }
+
+  .bridge,
+  .bridge::after {
+    display: none !important;
+  }
+
+  .glass-card {
+    background: #fff !important;
+    border-color: #000 !important;
+  }
+
+  /* The token marks must survive the printer. */
+  .token-unverified {
+    text-decoration: underline dotted #000 !important;
+  }
+
+  .token-unverified::before {
+    background: #000 !important;
+  }
+
+  .token-unverified::after {
+    content: ' (unverified)';
+    font-size: 0.7em;
+    vertical-align: 0.35em;
+  }
+
+  .token-edited {
+    border-left-color: #000 !important;
+  }
+
+  .panel {
+    background: #fff !important;
+    border-color: #000 !important;
+  }
+
+  button {
+    all: unset;
+    font: inherit;
+  }
+
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+}
